@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>CrossFit Overlay Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@500;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--a:#e10600;--bg:#080F20;--pn:#0D192C;--ln:#26385c;--f:'Oswald','Arial Narrow',sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:#fff;font:13px Montserrat,Arial,sans-serif}
+body.ovl{background:transparent!important;overflow:hidden;height:100%;margin:0;padding:0}html{height:100%}
+/* overlay strip: 1672x460 design units */
+.strip-in{position:relative;width:1672px;height:460px;transform-origin:0 0;font-family:Montserrat,sans-serif;font-weight:700}
+.chk{background:#fff linear-gradient(45deg,#ccc 25%,transparent 25% 75%,#ccc 75%) 0 0/24px 24px,linear-gradient(45deg,#ccc 25%,transparent 25% 75%,#ccc 75%) 12px 12px/24px 24px;overflow:hidden;position:relative}
+.z{position:absolute;background:linear-gradient(160deg,#1a1a1c,#050505 55%,#141416);border:3px solid #2a2a2e;box-shadow:0 10px 30px #000a,inset 0 0 0 2px #000}
+.z:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 80%,var(--a) 80.5% 83%,transparent 83.5%);pointer-events:none}
+.D{font-family:var(--f);text-transform:uppercase}.r{color:var(--a)}
+#L{left:26px;top:56px;width:560px;height:374px;clip-path:polygon(0 0,92% 0,100% 10%,100% 100%,0 100%);padding:0;display:flex;flex-direction:column}.lg{height:140px;flex:none;display:flex;align-items:center;gap:18px;padding:0 30px 0 44px}.ev{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;padding:0 34px 8px 44px}
+#E{align-self:flex-start;margin-left:-44px;font-size:18px;background:#fff;color:var(--a);padding:2px 38px 2px 44px;clip-path:polygon(0 0,100% 0,88% 100%,0 100%)}
+.C{position:absolute;left:606px;top:34px;width:400px;height:400px;border-radius:50%;background:radial-gradient(#050505 55%,#111);border:10px solid #262629;box-shadow:0 0 0 3px #000,0 0 40px #000}
+#W{left:604px;top:356px;width:404px;height:78px;display:flex;clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);padding:0;border:0}
+#W div{flex:1;text-align:center;padding-top:8px;font-size:30px;line-height:30px}#W small{font-size:30px}
+#R{left:1030px;top:142px;width:620px;height:288px;padding:0}
+#LV{position:absolute;left:1365px;top:78px;width:285px;height:60px;background:#0a0a0a;border:3px solid #2a2a2e;display:flex;align-items:center;gap:20px;padding:0 20px;clip-path:polygon(6% 0,100% 0,100% 100%,0 100%)}
+.live{background:var(--a);padding:3px 14px;font-size:22px;border-radius:3px}
+.kb{width:130px;height:130px}
+.z{background:repeating-linear-gradient(135deg,#ffffff07 0 1px,transparent 1px 4px),linear-gradient(160deg,#1c1c1f,#050505 55%,#141416);box-shadow:0 10px 26px #000b,inset 0 1px 0 #ffffff30,inset 0 0 0 2px #000}#W:before{display:none}#W div+div{border-left:2px solid #000}.lg{background:linear-gradient(180deg,#232327,#09090b);border-bottom:2px solid var(--a);box-shadow:0 5px 12px #0009;position:relative;z-index:1}.ev{justify-content:flex-start;gap:8px;background:linear-gradient(160deg,#111113,#000);padding-top:8px}#E{margin-top:6px}.C{background:radial-gradient(circle at 50% 30%,#121214,#030303 70%);border:10px solid #2b2b30;box-shadow:0 8px 24px #000b,0 0 0 2px #000,inset 0 0 0 2px #ffffff22,inset 0 6px 16px #0009}#LV{box-shadow:inset 0 1px 0 #ffffff30,0 6px 16px #0008}#W{box-shadow:0 6px 16px #0009}.C .D{font-variant-numeric:tabular-nums}.grid label{margin:8px 0 3px}.grid input[type=text],.grid input[type=number],.grid select{height:32px}.grid .tg{padding:5px 0}.grid .btn{min-height:34px}.grid .p{box-shadow:inset 0 1px 0 #ffffff10,0 3px 10px #0006}.inf{margin:auto -34px -8px -44px;padding:10px 44px;font-size:20px;display:flex;gap:40px;white-space:nowrap;background:linear-gradient(#0d0d0f,#000);border-top:2px solid #34343a}
+/* dashboard */
+#app{max-width:1672px;margin:0 auto}
+#hero{width:100%;aspect-ratio:1672/460}
+nav{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#08111f;border-bottom:1px solid var(--ln);flex-wrap:nowrap;overflow-x:auto}.tab,.btn,nav h1,nav span{white-space:nowrap;flex:none}
+nav h1{font:700 17px Oswald;margin:0 18px 0 4px;text-transform:uppercase;letter-spacing:.3px}
+.tab{background:#0d1a30;color:#cfd8ea;border:0;padding:9px 18px;font:600 12.5px Montserrat;cursor:pointer}.tab.on{background:var(--a);color:#fff}
+.sp{flex:1}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2fd16b;margin-right:8px}
+.btn{border:0;color:#fff;padding:10px 16px;font:700 12px Montserrat;cursor:pointer;border-radius:3px;background:#162441}
+.grid{display:grid;grid-template-columns:minmax(0,1.075fr) minmax(0,1.125fr) minmax(0,1.1fr) minmax(0,.75fr) minmax(0,.95fr);gap:12px;padding:12px;align-items:start}.grid>*{min-width:0}
+@media(max-width:1439px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:1023px){.grid,.two{grid-template-columns:1fr!important}}
+.p{background:linear-gradient(180deg,#0f1d34,var(--pn));border:1px solid var(--ln);border-radius:3px;padding:12px;margin-bottom:12px}.grid>div>.p:last-child{margin-bottom:0}
+.p h2{font:700 14px Montserrat;margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid var(--ln)}
+label{display:block;color:#9fb0cf;font-size:11px;margin:9px 0 3px}
+input[type=text],input[type=number],select,textarea{width:100%;background:#14233D;border:1px solid #1d2e50;color:#fff;padding:6px 8px;border-radius:2px;font:12px Montserrat}
+input[type=number]{width:62px;text-align:center;font-size:16px}textarea{resize:vertical;min-height:60px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.row>.n{flex:none}
+.seg{display:flex}.seg button{flex:1;background:#101c33;color:#7f90b0;border:0;padding:9px;cursor:pointer;font:600 12px Montserrat}.seg .on{background:var(--a);color:#fff}
+.tg{display:flex;justify-content:space-between;align-items:center;padding:7px 0}
+.tg input{appearance:none;width:36px;height:20px;background:#2a3a5c;border-radius:10px;position:relative;cursor:pointer}.tg input:checked{background:#2c7bff}
+.tg input:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}.tg input:checked:after{left:18px}
+.sw{display:flex;gap:12px;margin:6px 0}.sw i{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent}.sw i.on{border-color:#fff}
+.go{background:#18a34a}.pa{background:#e0a100}.rs{background:#d9261c}.bl{background:#1769ff}
+.wr{display:grid;grid-template-columns:40px minmax(0,1fr) 22px 22px 22px;gap:3px;align-items:center;margin-bottom:5px}.wr input{min-width:0;font-size:11.5px;padding:6px 6px}.wr input:first-child{width:100%;padding:6px 2px;text-align:center}.wr .btn{padding:7px 0;width:22px;font-size:11px;text-align:center}
+.sec{display:none}.sec.on{display:block}.sec.on.grid{display:grid}
+body .btn,body .tab,body .seg button,body .p h2,body input,body select,body textarea{font-family:Montserrat,Arial,sans-serif}nav h1{font-family:Oswald,'Arial Narrow',Arial,sans-serif}#L:before{background:linear-gradient(115deg,transparent 93%,var(--a) 93.5% 96.5%,transparent 97%)}.inf{overflow:hidden}
+pre,code{background:#101c33;padding:2px 5px;border-radius:2px;font-size:12px;white-space:pre-wrap;word-break:break-all}
+.msg{color:#ffb020;font-size:12px;min-height:16px}.ok{color:#2fd16b}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sc{display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--ln)}.sc b{flex:1}
+</style></head><body>
+<div id="app"></div>
+<script>
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
+const K='CROSSFIT_OVERLAY_STATE',KS='cfo_scenes_v1',TH={red:'#e10600',blue:'#1e6bff',green:'#18b04a',gold:'#e0a800',purple:'#8a3ffc'};
+const D={ev:{title:'CROSSFIT OPEN',sub:'Community Throwdown',tag:'Stronger People | Better Community',loc:'Berlin, Germany',date:'Apr 27, 2025'},logo:'',
+wod:{title:'AMRAP 12',rows:[['10','Burpee Box Jump Overs'],['15','Kettlebell Swings (24/16 KG)'],['20','Air Squats']],coach:'Alex Keller',notes:'Scale as needed | Stay hydrated!'},
+tm:{mode:'countdown',h:0,m:5,s:0,round:2,rounds:5,wm:1,ws:0,rm:0,rs:30,seq:'',sound:false},
+st:{theme:'red',font:'Montserrat Bold',op:100,sz:100,logoSz:100,show:{logo:1,event:1,timer:1,wod:1,coach:1,notes:1,clock:1,loc:1,date:1,wr:1}},T:{run:false,acc:0,t0:0}};
+const cl=o=>JSON.parse(JSON.stringify(o)),mg=(a,b)=>{for(const k in b)a[k]=b[k]&&typeof b[k]=='object'&&!Array.isArray(b[k])?mg(a[k]||{},b[k]):b[k];return a};
+/* Validates and repairs any state object (storage, sync messages, imports, scenes) */
+function clean(o){const c=mg(cl(D),o&&typeof o=='object'&&!Array.isArray(o)?o:{}),d=cl(D);
+for(const g of['ev','wod','tm','st'])if(!c[g]||typeof c[g]!='object'||Array.isArray(c[g]))c[g]=d[g];
+for(const k in d.ev)if(typeof c.ev[k]!='string')c.ev[k]=d.ev[k];
+for(const k of['title','coach','notes'])if(typeof c.wod[k]!='string')c.wod[k]=d.wod[k];
+if(typeof c.logo!='string'||(c.logo&&!/^data:image\/(png|svg\+xml);base64,/.test(c.logo)))c.logo='';
+c.wod.rows=(Array.isArray(c.wod.rows)?c.wod.rows:d.wod.rows).filter(Array.isArray).slice(0,12).map(r=>[String(r[0]??''),String(r[1]??'')]);
+for(const k of['h','m','s','round','rounds','wm','ws','rm','rs']){const v=+c.tm[k];c.tm[k]=isFinite(v)?Math.max(k.startsWith('round')?1:0,Math.min(999,Math.floor(v))):d.tm[k]}
+if(!['countdown','stopwatch','intervals'].includes(c.tm.mode))c.tm.mode='countdown';if(typeof c.tm.seq!='string')c.tm.seq='';c.tm.sound=!!c.tm.sound;
+if(!TH[c.st.theme])c.st.theme='red';if(!['Montserrat Bold','Anton','Oswald'].includes(c.st.font))c.st.font=d.st.font;
+for(const k of['op','sz','logoSz']){const v=+c.st[k];c.st[k]=isFinite(v)?Math.max(10,Math.min(140,v)):d.st[k]}
+if(!c.st.show||typeof c.st.show!='object')c.st.show=d.st.show;for(const k in d.st.show)c.st.show[k]=c.st.show[k]?1:0;
+const T=c.T&&typeof c.T=='object'?c.T:{};c.T={run:!!T.run,acc:isFinite(+T.acc)?Math.max(0,+T.acc):0,t0:isFinite(+T.t0)?+T.t0:0};return c}
+let S;try{S=clean(JSON.parse(localStorage[K]||localStorage.cfo_v1))}catch{S=cl(D)}
+const bc='BroadcastChannel'in window?new BroadcastChannel('cfo'):null;let lastRaw='';try{lastRaw=localStorage[K]||''}catch{}
+/* Debug: add ?debug=1 to the URL (before the #) to log sync events to the console and show a status line on the overlay. */
+const DBG=/debug/.test(location.search+location.hash),LS={src:'none',n:0,t:0,err:''};let LA='',warned=0;
+/* Informational timer snapshot sent with every save (action, elapsed, remaining, mode, round, phase). The overlay never runs its own timer: it only renders S.T through disp(). */
+const tsnap=a=>{const d=disp();return{action:a||'',run:S.T.run,elapsed:+el().toFixed(3),remaining:S.tm.mode=='stopwatch'?null:+d.mm*60+ +d.ss,mode:S.tm.mode,round:d.rd,rounds:d.tot,phase:d.ph||d.lab}};const got=src=>{LS.src=src;LS.n++;LS.t=Date.now();if(DBG)console.log('STATE RECEIVED | '+(isO?'Overlay':'Dashboard')+' received state ['+src+'] '+new Date().toISOString())};
+const isO=location.hash.startsWith('#/overlay');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function save(){try{lastRaw=JSON.stringify(S);localStorage[K]=lastRaw}catch(e){toast('Storage full: use a smaller logo')}if(DBG)console.log('STATE SENT | Dashboard saved state '+new Date().toISOString()+' timer='+JSON.stringify(tsnap(LA)));bc&&bc.postMessage(S);push();fileWrite();wsSend();if(!isO&&!FH&&!wsOK&&!(SID&&KEYQ)&&!warned){warned=1;toast('OBS cannot see these changes yet: Chrome and OBS do not share storage. Open the Streaming tab and use Connect to OBS (or Link state file / server mode).')}paint()}
+function toast(m){const t=$('#msg');if(t)t.textContent=m}
+const gp=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o),sp=(o,p,v)=>{const a=p.split('.'),l=a.pop();gp(o,a.join('.')||'x')??0;a.reduce((x,k)=>x[k],o)[l]=v};
+/* ---- timer ---- */
+/* Elapsed time uses the monotonic performance.now() clock. Wall-clock Date.now() is read only once, when a running state is adopted from another window, to convert its start time into this window's monotonic clock. */
+let OFF=0;let pa=performance.now();const adopt=()=>{if(S.T.run)pa=performance.now()-Math.max(0,Date.now()+OFF-S.T.t0)};adopt();
+const el=()=>(S.T.acc+(S.T.run?performance.now()-pa:0))/1000;
+function parseSeq(t){if(!t.trim())return[];const o=[];for(const x of t.split('+').map(s=>s.trim())){let m;if(m=x.match(/^(\d+(?:\.\d+)?)m$/))o.push(m[1]*60);else if(m=x.match(/^(\d+):([0-5]?\d)$/))o.push(+m[1]*60+ +m[2]);else if(m=x.match(/^(\d+)s?$/))o.push(+m[1]);else return null;}return o.some(v=>v<=0)?null:o}
+function segs(){const t=S.tm,q=parseSeq(t.seq);if(q&&q.length)return q;const w=t.wm*60+ +t.ws,r=t.rm*60+ +t.rs,o=[];for(let i=0;i<Math.max(1,t.rounds);i++){o.push(w);if(r>0)o.push(r)}return o.filter(v=>v>0)}
+const cap=()=>S.tm.h*3600+S.tm.m*60+ +S.tm.s;
+function disp(){const t=S.tm,e=el();let v,lab='TIME CAP',pr=1,rd=t.round,tot=t.rounds,ph='',done=false;
+if(t.mode=='countdown'){const c=cap();v=Math.max(0,c-e);pr=c?v/c:0;done=c>0&&e>=c}
+else if(t.mode=='stopwatch'){v=e;lab='STOPWATCH';pr=(e%60)/60}
+else{const sg=segs(),T=sg.reduce((a,b)=>a+b,0);let acc=0,i=0;for(;i<sg.length;i++){if(e<acc+sg[i])break;acc+=sg[i]}done=i>=sg.length;if(done){i=sg.length-1;v=0;pr=0}else{v=acc+sg[i]-e;pr=v/sg[i]}
+const hasR=!t.seq&&t.rm*60+ +t.rs>0||!!t.seq;ph=(!t.seq&&!hasR)||i%2==0?'WORK':'REST';if(!t.seq&&!hasR)ph='WORK';rd=hasR?Math.floor(i/2)+1:i+1;tot=hasR?Math.ceil(sg.length/2):sg.length;lab=done?'FINISHED':ph}
+const m=Math.floor(v/60),s=Math.floor(v%60);return{lab:done&&t.mode!='intervals'?'FINISHED':lab,mm:String(m).padStart(2,'0'),ss:String(s).padStart(2,'0'),pr,rd,tot,ph,done}}
+function beep(){if(!S.tm.sound)return;try{const c=new AudioContext(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();o.stop(c.currentTime+.5)}catch{}}
+const fmt=(a,b)=>String(a).padStart(2,'0')+':'+String(b).padStart(2,'0');
+/* ---- overlay render ---- */
+const FM={'Montserrat Bold':"'Oswald'",Anton:"'Anton'",Oswald:"'Oswald'"};
+function ovHTML(){const s=S.st.show,e=S.ev,w=S.wod,d=disp(),z=S.st.sz/100,[a,b]=e.title.toUpperCase().split(/ (.+)/),C=2*Math.PI*185,now=new Date().toLocaleTimeString('en-GB');
+const logo=S.logo?`<img src="${S.logo}" style="max-height:${130*S.st.logoSz/100}px;max-width:${150*S.st.logoSz/100}px">`:`<svg class="kb" viewBox="0 0 100 100" style="height:${130*S.st.logoSz/100}px;width:${130*S.st.logoSz/100}px"><path d="M30 38a20 20 0 0 1 40 0" fill="none" stroke="#fff" stroke-width="6"/><path d="M50 20c-22 0-32 16-26 34 4 14 14 26 26 26s22-12 26-26c6-18-4-34-26-34z" fill="var(--a)" stroke="#fff" stroke-width="3"/><rect x="6" y="52" width="88" height="8" fill="#ddd"/><rect x="4" y="44" width="8" height="24" fill="#fff"/><rect x="88" y="44" width="8" height="24" fill="#fff"/></svg>`;
+const tk=[...Array(12)].map((_,i)=>`<line x1="200" y1="22" x2="200" y2="${i%3?30:40}" stroke="#fff" stroke-width="2" transform="rotate(${i*30} 200 200)"/>`).join('');
+const sec=d.ss;
+return `<div style="opacity:${S.st.op/100};--f:${FM[S.st.font]},'Arial Narrow',sans-serif;position:absolute;inset:0">
+${s.logo||s.event?`<div class="z" id="L">
+${s.logo?`<div class="lg">${logo}<div><div class="D" style="font-size:${52*z}px;line-height:50px">YOUR <span class="r">LOGO</span></div><div style="font-size:14px;letter-spacing:1px">FITNESS • COMMUNITY • RESULTS</div></div></div>`:''}
+${s.event?`<div class="ev"><div id="E" class="D">EVENT</div>
+<div class="D fit" style="font-size:${64*z}px;line-height:66px;white-space:nowrap;overflow:hidden">${esc(a)} <span class="r">${esc(b||'')}</span></div>
+<div style="font-size:${17*z}px;letter-spacing:7px;white-space:nowrap;overflow:hidden" class="D fit">${esc(e.sub)}</div>
+<div style="font-size:${15*z}px;letter-spacing:3px;font-weight:500;white-space:nowrap;overflow:hidden" class="D fit">${esc(e.tag)}</div>
+<div class="D inf fit">${s.loc?`<span><span class="r">●</span> ${esc(e.loc)}</span>`:''}${s.date?`<span><span class="r">▣</span> ${esc(e.date)}</span>`:''}</div></div>`:''}</div>`:''}
+${s.timer?`<div class="C"><svg viewBox="0 0 400 400" style="position:absolute;inset:0;width:100%;height:100%"><circle cx="200" cy="200" r="185" fill="none" stroke="#2a0a0a" stroke-width="12"/><circle cx="200" cy="200" r="185" fill="none" stroke="var(--a)" stroke-width="14" stroke-dasharray="${C*d.pr} ${C}" transform="rotate(-90 200 200)"/>${tk}</svg>
+<div class="D" style="position:absolute;top:76px;line-height:30px;width:100%;text-align:center;font-size:26px">${d.lab}</div>
+<div class="D" style="position:absolute;top:116px;width:100%;text-align:center;font-size:${116*z}px;line-height:116px;letter-spacing:-1px">${d.mm}:<span class="r">${sec}</span></div>
+<div class="D" style="position:absolute;top:262px;line-height:30px;width:100%;text-align:center;font-size:26px">ROUND <span class="r">${d.rd} / ${d.tot}</span></div></div>
+${s.wr?`<div class="z D" id="W"><div style="background:linear-gradient(var(--a),#400)">WORK<br>${fmt(S.tm.wm,S.tm.ws)}</div><div style="background:#16181d">REST<br>${fmt(S.tm.rm,S.tm.rs)}</div></div>`:''}`:''}
+${s.clock?`<div id="LV"><span class="live D">● LIVE</span><span class="D" style="font-size:38px">${now}</span></div>`:''}
+${s.wod?`<div class="z" id="R"><div class="D" style="position:absolute;left:70px;top:8px;font-size:52px">WOD <span style="font-size:28px;background:var(--a);padding:2px 30px;margin-left:24px;vertical-align:middle">${esc(w.title)}</span></div>
+<div class="D" style="position:absolute;left:46px;top:78px;font-size:26px;line-height:36px;right:10px;${s.coach||s.notes?'':'bottom:10px'}">${w.rows.map(r=>`<div><span class="r" style="display:inline-block;width:50px;font-size:30px">${esc(r[0])}</span>${esc(r[1])}</div>`).join('')}</div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:88px;border-top:2px solid #3a3a40;background:linear-gradient(#0d0d0f,#000);display:flex;align-items:center;padding:0 34px;gap:0" class="D">${s.coach?`<div style="padding-right:34px;margin-right:34px;border-right:1px solid #3a3a40"><small style="color:#aaa;font-size:15px">COACH</small><div style="font-size:26px">${esc(w.coach)}</div></div>`:''}${s.notes?`<div style="font-size:17px;line-height:22px"><small style="color:#aaa;font-size:15px">NOTES</small><br>${w.notes.split('|').map(x=>esc(x.trim())).join('<br>')}</div>`:''}</div></div>`:''}</div>`}
+function paint(){document.documentElement.style.setProperty('--a',TH[S.st.theme]||TH.red);
+const h=ovHTML();$$('.strip-in').forEach(n=>{if(n._h!==h){n._h=h;n.innerHTML=h;n.querySelectorAll('.fit').forEach(e=>{let f=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+1&&f>12){f-=1.5;e.style.fontSize=f+'px'}})}});fit()}
+function fit(){$$('.strip-in').forEach(n=>{const p=n.parentElement,k=(isO?innerWidth:p.clientWidth)/1672;n.style.transform=`scale(${k})`;if(!isO&&p.id=='hero')p.style.height=460*k+'px';else if(!isO){n.style.position='absolute';n.style.left='0px';n.style.top='0px'}})}
+/* ---- app ---- */
+const NOOP=()=>{};
+function build(){const app=$('#app');
+if(isO){document.body.className='ovl';document.documentElement.style.background='transparent';app.style.cssText='max-width:none;margin:0';app.innerHTML='<div id="strip" class="strip-in"></div>';$('#strip').style.cssText='position:relative';$('#strip').classList.add('strip-in');return}
+app.innerHTML=`<div class="chk" id="hero"><div id="strip" class="strip-in"></div></div>
+<nav><svg width="34" height="34" viewBox="0 0 100 100"><path d="M50 14c-26 0-36 18-28 38 5 14 15 30 28 30s23-16 28-30c8-20-2-38-28-38z" fill="var(--a)"/></svg><h1>CrossFit Overlay Control</h1>
+${['Live Control','Overlay Settings','Timer Settings','Text & Branding','Scenes','Streaming'].map((t,i)=>`<button class="tab${i?'':' on'}" data-t="${i}">${t}</button>`).join('')}
+<span class="sp"></span><span style="color:#9fb0cf"><i class="dot"></i>Preview Mode</span><button class="btn" id="open" style="background:var(--a)">OPEN OVERLAY ↗</button></nav>
+<div id="msg" class="msg" style="padding:6px 16px"></div>
+<div class="sec on grid">
+<div><div class="p"><h2>1. LOGO &amp; EVENT INFO</h2><div class="row"><div id="lp" style="background:#000;height:90px;flex:none;width:90px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#667">default</div><div><b>Upload Logo</b><br><small>PNG / SVG, max 500 KB</small><div class="row" style="margin-top:8px"><button class="btn" id="up">Change</button><button class="btn" id="rm">Remove</button></div></div></div><input type="file" id="file" accept="image/png,image/svg+xml" hidden>
+<label>Event Title</label><input type=text data-k="ev.title"><label>Subtitle</label><input type=text data-k="ev.sub"><label>Tagline</label><input type=text data-k="ev.tag"><label>Location</label><input type=text data-k="ev.loc"><label>Date</label><input type=text data-k="ev.date"></div></div>
+<div><div class="p"><h2>2. TIMER CONTROL</h2><div class="seg" id="mode">${['countdown','stopwatch','intervals'].map(m=>`<button data-m="${m}">${m[0].toUpperCase()+m.slice(1)}</button>`).join('')}</div>
+<label>Time Cap (h : m : s)</label><div class="row"><input type=number min=0 max=99 data-k="tm.h"><input type=number min=0 max=59 data-k="tm.m"><input type=number min=0 max=59 data-k="tm.s"></div>
+<label>Round (current / total)</label><div class="row"><input type=number min=1 data-k="tm.round"><input type=number min=1 data-k="tm.rounds"></div>
+<label>Work Time (m : s)</label><div class="row"><input type=number min=0 data-k="tm.wm"><input type=number min=0 max=59 data-k="tm.ws"></div>
+<label>Rest Time (m : s)</label><div class="row"><input type=number min=0 data-k="tm.rm"><input type=number min=0 max=59 data-k="tm.rs"></div>
+<div class="row" style="margin-top:14px"><button class="btn go" id="start">▶ START</button><button class="btn pa" id="pause">❚❚ PAUSE</button><button class="btn rs" id="reset">↺ RESET</button></div><small style="color:#7f90b0">Keys: Space start/pause · R reset</small></div></div>
+<div><div class="p"><h2>3. WOD / RIGHT PANEL</h2><label>WOD Title</label><input type=text data-k="wod.title"><label>Exercises (count | name)</label><div id="rows"></div><button class="btn" id="add">+ Add exercise</button>
+<label>Coach Name</label><input type=text data-k="wod.coach"><label>Notes (use | for new line)</label><textarea data-k="wod.notes"></textarea></div></div>
+<div><div class="p"><h2>4. STYLE &amp; APPEARANCE</h2><label>Color Theme</label><div class="sw">${Object.entries(TH).map(([k,c])=>`<i data-th="${k}" style="background:${c}" title="${k}"></i>`).join('')}</div>
+<label>Font Style</label><select data-k="st.font"><option>Montserrat Bold<option>Anton<option>Oswald</select><label>Overlay Opacity: <span id="opv"></span>%</label><input type=range min=10 max=100 data-k="st.op" style="width:100%">
+${[['logo','Logo'],['event','Event Info'],['timer','Timer'],['wod','WOD'],['coach','Coach'],['notes','Notes']].map(([k,n])=>`<div class="tg">Show ${n}<input type=checkbox data-k="st.show.${k}"></div>`).join('')}</div></div>
+<div><div class="p"><h2>5. OVERLAY PREVIEW</h2><div class="chk" style="box-shadow:0 0 0 2px #f33;margin:2px;aspect-ratio:1672/460"><div class="strip-in" style="position:relative"></div></div><div style="margin-top:10px"><button class="btn bl" id="copy" style="width:100%;padding:12px">COPY BROWSER SOURCE URL</button></div><div style="margin-top:8px"><button class="btn" id="test" style="width:100%;padding:12px">TEST IN NEW TAB</button></div></div>
+<div class="p"><h2>6. STREAMING INFO</h2>OBS Studio (Browser Source) — <i style="color:#ffb020">not verified</i><br>Streamlabs (Compatible) — <i style="color:#ffb020">not verified</i><br>Zoom (via OBS Virtual Camera) — <i style="color:#ffb020">not verified</i><br><small style="color:#7f90b0">Statuses stay amber until tested in your setup.</small></div></div></div>
+<div class="sec" style="padding:14px"><div class="p"><h2>Overlay Settings</h2><div class="two"><div><label>Overlay Opacity <span id="opv2"></span>%</label><input type=range min=10 max=100 data-k="st.op" style="width:100%">
+${[['clock','Live Clock'],['loc','Location'],['date','Date'],['wr','Work/Rest panel']].map(([k,n])=>`<div class="tg">Show ${n}<input type=checkbox data-k="st.show.${k}"></div>`).join('')}</div>
+<div><label>Accent color theme</label><div class="sw">${Object.entries(TH).map(([k,c])=>`<i data-th="${k}" style="background:${c}"></i>`).join('')}</div><button class="btn rs" id="defs" style="margin-top:20px">Restore default layout</button></div></div></div></div>
+<div class="sec" style="padding:14px"><div class="p"><h2>Timer Settings</h2><div class="two"><div><label>Sequence (e.g. <code>2m + 30 + 1:00</code> — alternates work/rest; plain numbers are seconds)</label><input type=text id="seq"><div class="row" style="margin-top:8px"><button class="btn bl" id="seqa">Validate &amp; apply</button><button class="btn" id="seqc">Clear</button></div><div class="msg" id="seqm"></div><small style="color:#7f90b0">Applies in Intervals mode. Empty = repeat Work/Rest × rounds.</small></div>
+<div><div class="tg">Sound alert on completion<input type=checkbox data-k="tm.sound"></div><label>Timer size <span></span>%</label><input type=range min=60 max=110 data-k="st.sz" style="width:100%"><small style="color:#7f90b0">Not included yet: pre-start countdown, color transitions.</small></div></div></div></div>
+<div class="sec" style="padding:14px"><div class="p"><h2>Text &amp; Branding</h2><div class="two"><div><label>Logo size %</label><input type=range min=50 max=140 data-k="st.logoSz" style="width:100%"><label>Font style</label><select data-k="st.font"><option>Montserrat Bold<option>Anton<option>Oswald</select></div><div><small style="color:#7f90b0">Text edits live in panels 1 and 3 on Live Control. Per-element font weight, color and alignment are not included yet.</small></div></div></div></div>
+<div class="sec" style="padding:14px"><div class="p"><h2>Scenes</h2><div class="row"><input type=text id="sn" placeholder="Scene name"><button class="btn bl n" id="ssv">Save current</button></div><div id="sl"></div>
+<label>JSON backup (export / paste to import)</label><textarea id="js" style="min-height:120px"></textarea><div class="row" style="margin-top:8px"><button class="btn" id="jx">Export</button><button class="btn" id="ji">Import</button></div><small style="color:#7f90b0">Scenes live in this browser only. Syncing across devices needs a server.</small></div></div>
+<div class="sec" style="padding:14px"><div class="p"><h2>Streaming</h2><p><b>Live link to OBS (no files, no server):</b> <input type="text" id="wsa" value="ws://127.0.0.1:4455" style="width:190px"> <input type="password" id="wsp" placeholder="OBS WebSocket password" style="width:190px"> <button class="btn bl" id="wsb">Connect to OBS</button> <span id="wss" class="msg"></span><br><small style="color:#7f90b0">In OBS: Tools > WebSocket Server Settings > enable the server, copy the password. Keep this tab open. Sends the state to every OBS browser source every change and every 2 s.</small></p><p><button class="btn bl" id="fbtn">Link state file (local OBS sync)</button> <span id="fbs" class="msg"></span><br><small style="color:#7f90b0">Chrome/Edge only. Choose the <code>state.js</code> file that sits next to <code>index.html</code> and confirm overwrite. Needed again after each browser restart.</small></p><p>Overlay URL: <code id="url"></code></p><b>OBS / Streamlabs</b><ol><li>Add a <i>Browser</i> source, paste the URL, size 1920 × 1080.</li><li>Clear any custom CSS background; the page is already transparent.</li><li>Keep the source on the same machine/browser profile as this dashboard (sync uses browser storage, so a separate browser will not receive updates). Easiest: add this dashboard as an OBS <i>Custom Browser Dock</i>.</li></ol><b>Zoom</b><ol><li>Start the OBS Virtual Camera.</li><li>In Zoom: Settings → Video → Camera → OBS Virtual Camera.</li></ol><p>Zoom cannot show a transparent HTML overlay itself; it only receives OBS's composed video. Cross-device sync is not built (needs a hosted backend). Not yet tested in OBS or Zoom.</p></div></div>`;
+wire();}
+function wire(){const ov=()=>{const u=new URL(location.href);u.searchParams.delete('k');u.hash='#/overlay';return u.href};
+$('#url').textContent=ov();$('#wsb').onclick=()=>wsConnect($('#wsa').value.trim(),$('#wsp').value);$('#fbtn').onclick=async()=>{if(!window.showSaveFilePicker)return toast('This browser cannot write files. Use Chrome or Edge, or server mode.');try{FH=await showSaveFilePicker({suggestedName:'state.js',types:[{description:'State script',accept:{'text/javascript':['.js']}}]});$('#fbs').className='msg';fileWrite()}catch(e){if(e.name!='AbortError')toast('Could not link file: '+e.message)}};$('#open').onclick=$('#test').onclick=()=>window.open(ov(),'_blank');
+$('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(ov());toast('Overlay URL copied.')}catch{toast('Copy was blocked by the browser. Select the URL on the Streaming tab instead: '+ov())}};
+$$('[data-t]').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===b));$$('.sec').forEach((s,i)=>s.classList.toggle('on',i==b.dataset.t))});
+$$('[data-k]').forEach(i=>{i.oninput=i.onchange=()=>{const t=i.type;let v=t=='checkbox'?+i.checked:t=='number'||t=='range'?Math.max(+i.min||0,Math.min(+i.max||9999,+i.value||0)):i.value;if(t=='number'&&(i.dataset.k=='tm.round'||i.dataset.k=='tm.rounds'))v=Math.max(1,v);sp(S,i.dataset.k,v);save();sync()}});
+$$('[data-th]').forEach(i=>i.onclick=()=>{S.st.theme=i.dataset.th;save();sync()});
+$$('#mode button').forEach(b=>b.onclick=()=>{S.tm.mode=b.dataset.m;S.T={run:false,acc:0,t0:0};save();sync()});
+$('#start').onclick=start;$('#pause').onclick=pause;$('#reset').onclick=reset;
+function start(){if(disp().done)S.T.acc=0;if(!S.T.run){LA=S.T.acc>0?'RESUME':'START';S.T.t0=Date.now()+OFF;pa=performance.now();S.T.run=true;save()}}
+function pause(){if(S.T.run){LA='PAUSE';S.T.acc+=performance.now()-pa;S.T.run=false;save()}else start()}
+function reset(){LA='RESET';S.T={run:false,acc:0,t0:0};save()}
+onkeydown=e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.code=='Space'){e.preventDefault();S.T.run?pause():start()}if(e.key=='r')reset()};
+$('#up').onclick=()=>$('#file').click();$('#rm').onclick=()=>{S.logo='';save();sync()};
+$('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!/^image\/(png|svg\+xml)$/.test(f.type))return toast('Use a PNG or SVG file.');if(f.size>5e5)return toast('Logo is over 500 KB; use a smaller file.');
+try{const buf=new Uint8Array(await new Promise((ok,no)=>{const q=new FileReader();q.onload=()=>ok(q.result);q.onerror=no;q.readAsArrayBuffer(f)}));
+if(f.type=='image/png'){if(![137,80,78,71,13,10,26,10].every((v,i)=>buf[i]==v))return toast('This file is not a real PNG.')}
+else{const doc=new DOMParser().parseFromString(new TextDecoder().decode(buf),'image/svg+xml');if(doc.querySelector('parsererror')||doc.documentElement.localName!='svg')return toast('This file is not a valid SVG.');
+const ext=/@import|url\(\s*['"]?(?!#)|javascript:/i;const bad=[...doc.querySelectorAll('*')].some(n=>/^(script|foreignobject|iframe|object|embed|audio|video|animate|set)$/i.test(n.localName)||ext.test(n.textContent)||[...n.attributes].some(a=>/^on/i.test(a.name)||(/href$/i.test(a.name)&&!/^(#|data:image\/)/i.test(a.value))||ext.test(a.value)));
+if(bad)return toast('SVG rejected: it contains scripts or external references.')}}catch{return toast('Could not read file.')}
+const r=new FileReader();r.onload=()=>{S.logo=r.result;toast('Logo updated.');save();sync()};r.onerror=()=>toast('Could not read file.');r.readAsDataURL(f)};
+$('#add').onclick=()=>{S.wod.rows.push(['','']);save();sync()};
+$('#defs').onclick=()=>{const t=S.T;S=cl(D);S.T=t;save();sync()};
+$('#seqa').onclick=()=>{const q=parseSeq($('#seq').value);if(!q){$('#seqm').className='msg';$('#seqm').textContent='Invalid. Use e.g. 2m + 30 + 1:00 (m = minutes, mm:ss, or plain seconds).';return}S.tm.seq=$('#seq').value.trim();if(q.length){S.tm.mode='intervals';S.T={run:false,acc:0,t0:0}}$('#seqm').className='msg ok';$('#seqm').textContent=q.length?`Applied: ${q.join('s, ')}s (${q.length} segments). Switched to Intervals.`:'Cleared.';save();sync()};
+$('#seqc').onclick=()=>{$('#seq').value='';$('#seqa').click()};
+/* scenes */
+const sc=()=>{try{return JSON.parse(localStorage[KS]||'{}')}catch{return{}}},ss=o=>localStorage[KS]=JSON.stringify(o);
+const keep=()=>{const o=cl(S);delete o.T;return o};
+function sl(){const o=sc();$('#sl').innerHTML=Object.keys(o).map(n=>`<div class="sc"><b>${esc(n)}</b><button class="btn" data-a="l" data-n="${esc(n)}">Load</button><button class="btn" data-a="r" data-n="${esc(n)}">Rename→</button><button class="btn" data-a="d" data-n="${esc(n)}">Duplicate</button><button class="btn rs" data-a="x" data-n="${esc(n)}">Delete</button></div>`).join('')||'<p style="color:#7f90b0">No saved scenes yet. Name one above and save.</p>';
+$$('#sl button').forEach(b=>b.onclick=()=>{const o=sc(),n=b.dataset.n,nn=$('#sn').value.trim();if(b.dataset.a=='l'){const t=S.T;S=clean(o[n]);S.T=t;save();sync();toast('Loaded '+n)}
+if(b.dataset.a=='d')o[n+' copy']=o[n];if(b.dataset.a=='x')delete o[n];if(b.dataset.a=='r'){if(!nn||o[nn])return toast('Type a new, unused name in the box first.');o[nn]=o[n];delete o[n]}ss(o);sl()})}
+$('#ssv').onclick=()=>{const n=$('#sn').value.trim();if(!n)return toast('Enter a scene name.');const o=sc();o[n]=keep();ss(o);sl();toast('Saved '+n)};
+$('#jx').onclick=()=>{$('#js').value=JSON.stringify({current:keep(),scenes:sc()},null,1)};
+$('#ji').onclick=()=>{try{const j=JSON.parse($('#js').value);if(j.scenes&&typeof j.scenes=='object'&&!Array.isArray(j.scenes))ss(j.scenes);if(j.current){const t=S.T;S=clean(j.current);S.T=t}save();sync();sl();toast('Imported.')}catch{toast('Import failed: invalid JSON.')}};
+sl();}
+function sync(){if(isO)return;$$('[data-k]').forEach(i=>{const v=gp(S,i.dataset.k);if(i.type=='checkbox')i.checked=!!v;else if(document.activeElement!==i)i.value=v});
+$$('#mode button').forEach(b=>b.classList.toggle('on',b.dataset.m==S.tm.mode));$$('[data-th]').forEach(i=>i.classList.toggle('on',i.dataset.th==S.st.theme));
+$('#opv').textContent=$('#opv2').textContent=S.st.op;$('#lp').innerHTML=S.logo?`<img src="${S.logo}" style="max-width:100%;max-height:100%">`:'default';$('#seq').value=S.tm.seq||'';
+const R=$('#rows');if(R.children.length!=S.wod.rows.length||!R.dataset.i){R.dataset.i=1;R.innerHTML=S.wod.rows.map((r,i)=>`<div class="wr"><input type=text value="${esc(r[0])}" data-r="${i}" data-c="0"><input type=text title="${esc(r[1])}" value="${esc(r[1])}" data-r="${i}" data-c="1"><button class="btn" data-mv="${i}" data-d="-1">↑</button><button class="btn" data-mv="${i}" data-d="1">↓</button><button class="btn rs" data-rm="${i}">✕</button></div>`).join('');
+$$('[data-r]',R).forEach(i=>i.oninput=()=>{S.wod.rows[i.dataset.r][i.dataset.c]=i.value;save()});
+$$('[data-rm]',R).forEach(b=>b.onclick=()=>{S.wod.rows.splice(b.dataset.rm,1);R.dataset.i='';save();sync()});
+$$('[data-mv]',R).forEach(b=>b.onclick=()=>{const i=+b.dataset.mv,j=i+ +b.dataset.d,a=S.wod.rows;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];R.dataset.i='';save();sync()})}}
+build();
+bc&&(bc.onmessage=e=>{S=clean(e.data);adopt();got('broadcast');paint();sync()});
+addEventListener('storage',e=>{if(e.key==K){try{S=clean(JSON.parse(e.newValue));adopt();got('storage-event');paint();sync()}catch{}}});
+/* Optional server mode (server.js): shared session so OBS, phone and dashboard stay in sync across browsers/devices. ?s=SESSION_ID read-only; ?s=..&k=KEY can also control. */
+const QP=new URLSearchParams(location.search),SID=QP.get('s'),KEYQ=QP.get('k'),CID=Math.random().toString(36).slice(2);
+function push(){if(SID&&KEYQ)fetch('/api/state?s='+encodeURIComponent(SID),{method:'PUT',headers:{'x-key':KEYQ,'content-type':'application/json'},body:JSON.stringify({from:CID,state:S})}).then(r=>{if(!r.ok)toast('Remote control rejected: check the session key.')}).catch(()=>toast('Remote server unreachable.'))}
+if(SID&&typeof EventSource!='undefined'){const es=new EventSource('/api/events?s='+encodeURIComponent(SID));es.onmessage=e=>{try{const m=JSON.parse(e.data);OFF=m.t-Date.now();if(!m.state){if(KEYQ)push();return}if(m.from===CID)return;S=clean(m.state);adopt();got('server');try{lastRaw=JSON.stringify(S);localStorage[K]=lastRaw}catch{}paint();sync()}catch{}}}
+addEventListener('resize',fit);/* File bridge: works between different programs (Chrome dashboard -> OBS overlay) without a server. The dashboard writes state.js next to index.html (File System Access API, user-chosen file). The overlay reloads that file as a <script> every 500 ms (script tags may load file:// files). Writes are atomic, so the overlay never reads a half-written file. */
+let FH=null,fq=Promise.resolve(),fd=null;
+function fileWrite(){if(!FH)return;clearTimeout(fd);fd=setTimeout(()=>{fq=fq.then(async()=>{try{const w=await FH.createWritable();await w.write('window.__CFO='+JSON.stringify({v:Date.now(),state:S,timer:tsnap(LA)})+';\n');await w.close();const b=$('#fbs');if(b){b.className='msg ok';b.textContent='State file linked; last write '+new Date().toLocaleTimeString()}}catch(e){toast('State file write failed: '+e.message)}})},120)}
+/* OBS WebSocket bridge (obs-websocket v5, built into OBS 28+): the dashboard sends the state to every OBS browser source with the obs-browser vendor request emit_event; the overlay receives it as a window 'cfo-state' CustomEvent. Crosses the Chrome-to-OBS process boundary without files or a server. */
+let WS=null,wsOK=false,wsHB=null;
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))),sha=async s=>b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)));
+function wsStatus(t,ok){const e=$('#wss');if(e){e.className='msg'+(ok?' ok':'');e.textContent=t}}
+function wsConnect(addr,pw){try{if(WS)WS.close()}catch{}wsOK=false;if(!(window.crypto&&crypto.subtle))return wsStatus('This page needs a secure context (file:// or localhost) to log in to OBS.');wsStatus('Connecting...');let ws;try{ws=new WebSocket(addr)}catch(e){return wsStatus('Bad address: '+e.message)}WS=ws;
+ws.onmessage=async ev=>{let m;try{m=JSON.parse(ev.data)}catch{return}
+if(m.op===0){const id={rpcVersion:1,eventSubscriptions:0},a=m.d.authentication;if(a){if(!pw)return wsStatus('OBS asks for a password.');const sec=await sha(pw+a.salt);id.authentication=await sha(sec+a.challenge)}ws.send(JSON.stringify({op:1,d:id}))}
+else if(m.op===2){wsOK=true;wsStatus('Connected to OBS. State is sent live.',true);wsSend();clearInterval(wsHB);wsHB=setInterval(wsSend,2000)}
+else if(m.op===7&&m.d.requestStatus&&!m.d.requestStatus.result)wsStatus('OBS rejected the request: '+(m.d.requestStatus.comment||m.d.requestStatus.code))};
+ws.onclose=e=>{wsOK=false;clearInterval(wsHB);if(WS===ws)wsStatus(e.code===4009?'Wrong OBS WebSocket password.':'Disconnected from OBS.')};
+ws.onerror=()=>wsStatus('Cannot reach OBS at '+addr+'. Enable the server in OBS: Tools > WebSocket Server Settings.')}
+function wsSend(){if(!wsOK||!WS||WS.readyState!==1)return;WS.send(JSON.stringify({op:6,d:{requestType:'CallVendorRequest',requestId:Math.random().toString(36).slice(2),requestData:{vendorName:'obs-browser',requestType:'emit_event',requestData:{event_name:'cfo-state',event_data:{v:Date.now(),state:S,timer:tsnap(LA)}}}}}));if(DBG)console.log('STATE SENT | obs-websocket '+new Date().toISOString())}
+if(isO){let lw='';addEventListener('cfo-state',e=>{try{let c=e.detail;if(typeof c=='string')c=JSON.parse(c);if(!c||!c.state)return;const j=JSON.stringify(c.state);if(j===lw)return;lw=j;S=clean(c.state);adopt();got('obs-websocket');paint()}catch{}})}
+if(isO&&location.protocol==='file:'){let lv=0;const rd=()=>{const sc=document.createElement('script');sc.src='state.js?'+Date.now();sc.onload=()=>{sc.remove();const c=window.__CFO;if(c&&c.v&&c.v!==lv&&c.state){lv=c.v;S=clean(c.state);adopt();got('state.js');paint()}};sc.onerror=()=>{LS.err='state.js not loadable';sc.remove()};document.head.appendChild(sc)};rd();setInterval(rd,500)}
+document.fonts&&document.fonts.ready.then(()=>{$$('.strip-in').forEach(n=>n._h=null);paint()});
+/* Fallback transport for windows that share storage but miss BroadcastChannel/storage events (e.g. OBS dock + browser source): poll the saved state. Windows in a different browser profile (Chrome vs OBS) share nothing; use server mode for that. */
+setInterval(()=>{let raw;try{raw=localStorage[K]}catch{return}if(raw&&raw!==lastRaw){lastRaw=raw;try{S=clean(JSON.parse(raw));adopt();got('storage-poll');paint();sync()}catch{}}},500);
+if(DBG&&isO){const h=document.createElement('div');h.style.cssText='position:fixed;left:6px;bottom:6px;z-index:99;background:#000c;color:#0f0;font:14px/1.3 monospace;padding:4px 8px;white-space:pre';document.body.appendChild(h);setInterval(()=>{let ls='unreadable';try{ls=localStorage[K]?'has state':'empty'}catch{}h.textContent='CFO debug | storage: '+ls+' | last receive: '+LS.src+' '+(LS.t?new Date(LS.t).toLocaleTimeString():'never')+' | count '+LS.n+(LS.err?' | '+LS.err:'')+' | title: '+S.ev.title+' | timer: '+(S.T.run?'RUN':'STOP')+' '+S.tm.mode+' el='+el().toFixed(1)},500)}
+let wasRun=false;setInterval(()=>{const d=disp();if(!isO&&S.T.run&&d.done){S.T.acc=el()*1000;S.T.run=false;beep();save();toast('Timer complete.')}paint()},100);
+paint();sync();
+</script></body></html>
